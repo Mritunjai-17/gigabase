@@ -7,6 +7,7 @@ export interface ModuleItem {
   fullDesc: string;
   specs: { label: string; value: string }[];
   tag: string;
+  image: string;
   telemetry: {
     status: string;
     load: string;
@@ -23,6 +24,7 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     category: "Compute & White Space",
     shortDesc: "45-foot AI compute module with hot aisle containment, air-to-liquid cooling, and 4N3 redundant power.",
     fullDesc: "45-foot AI compute module with hot aisle containment, air-to-liquid cooling, and 4N3 redundant power. GigaPod supports high-density liquid-cooled and low-density air-cooled racks and scales to 90 or 135 feet.",
+    image: "/images/gigabase/gigapod.jpg",
     specs: [
       { label: "Footprint", value: "45-ft, 90-ft, or 135-ft" },
       { label: "Cooling Architecture", value: "Air-to-Liquid / DLC" },
@@ -44,6 +46,7 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     category: "Medium Voltage Distribution",
     shortDesc: "24.9kV or 35kV medium voltage module connecting and distributing power from the utility to the site.",
     fullDesc: "24.9kV or 35kV medium voltage module connecting and distributing power from the utility to the site with 2 incoming feeders and 10 feeder breakers.",
+    image: "/images/gigabase/mv-switchgear.jpg",
     specs: [
       { label: "Voltage Rating", value: "24.9kV or 35kV" },
       { label: "Incoming Feeders", value: "2 Redundant Feeds" },
@@ -65,6 +68,7 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     category: "Battery Backup Reserve",
     shortDesc: "3.0 MW lithium-ion battery backup bridging utility interruption and generator response.",
     fullDesc: "A 3.0 MW lithium-ion battery backup that keeps your compute online in the gap between utility interruption and generator response.",
+    image: "/images/gigabase/ups-e-house.jpg",
     specs: [
       { label: "Capacity", value: "3.0 MW Lithium-Ion" },
       { label: "Transfer Time", value: "0 ms Seamless Transfer" },
@@ -86,6 +90,7 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     category: "Transformation & Distribution",
     shortDesc: "3.6 MVA transformers paired with 5,000A low-voltage switchboards that step down and distribute voltage.",
     fullDesc: "3.6 MVA transformers paired with 5,000A low-voltage switchboards that step down and distribute voltage to the site.",
+    image: "/images/gigabase/power-skid.jpg",
     specs: [
       { label: "Transformer Rating", value: "3.6 MVA Padmount" },
       { label: "Switchboard Ampacity", value: "5,000A Low Voltage" },
@@ -107,6 +112,7 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     category: "Emergency Backup Power",
     shortDesc: "3.3MW diesel generator providing 24-hour backup power when utility power fails.",
     fullDesc: "3.3MW diesel generator providing 24-hour backup power when utility power fails. Includes belly tank, radiator and enclosure.",
+    image: "/images/gigabase/diesel-generator.jpg",
     specs: [
       { label: "Output Power", value: "3.3 MW Prime / Standby" },
       { label: "Run-time Tank", value: "24-Hour Sub-base Belly Tank" },
@@ -128,6 +134,7 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     category: "Interconnect Fabric",
     shortDesc: "Proprietary 5000A electrical interconnects that connect and distribute power between each module.",
     fullDesc: "Proprietary 5000A electrical interconnects that connect and distribute power between each module in the system.",
+    image: "/images/gigabase/electrical-glue.jpg",
     specs: [
       { label: "Bus Rating", value: "5,000A Continuous" },
       { label: "Interconnect Design", value: "Plug-and-play Quick Connect" },
@@ -149,6 +156,7 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     category: "Hydronic Interconnects",
     shortDesc: "Pre-engineered mechanical piping modules that connect the chiller loop to each GigaPod.",
     fullDesc: "Pre-engineered mechanical piping modules that connect the chiller loop to each GigaPod, delivering cooled water to the system.",
+    image: "/images/gigabase/cooling-glue.jpg",
     specs: [
       { label: "Loop Type", value: "Closed-loop Hydronic" },
       { label: "Connection", value: "Flexible Quick-couple Headers" },
@@ -170,6 +178,7 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     category: "Heat Rejection Plant",
     shortDesc: "2MW Maglev compressor chiller that rejects system heat and feeds a closed cooling water loop.",
     fullDesc: "2MW Maglev compressor chiller that rejects system heat and feeds a closed cooling water loop to each GigaPod.",
+    image: "/images/gigabase/air-cooled-chiller.jpg",
     specs: [
       { label: "Cooling Capacity", value: "2.0 MW Thermal Rejection" },
       { label: "Compressor Type", value: "Oil-free Magnetic Levitation" },
@@ -178,10 +187,10 @@ export const GIGABASE_MODULES: ModuleItem[] = [
     ],
     tag: "2MW MAGLEV PLANT",
     telemetry: {
-      status: "OPTIMAL",
-      load: "1.84 MW Thermal",
-      efficiency: "0.58 kW/ton",
-      thermal: "35°C Ambient Condenser",
+      status: "CHILLING",
+      load: "84.5% Compressor",
+      efficiency: "1.12 kW/Ton",
+      thermal: "7°C Chilled / 40°C Ambient",
     },
   },
 ];

@@ -26,28 +26,24 @@ function ModuleRow({
   idx,
   isActive,
   onActivate,
-  shouldReduceMotion
+  shouldReduceMotion,
+  cardRef
 }: {
   mod: ModuleItem;
   idx: number;
   isActive: boolean;
   onActivate: (idx: number) => void;
   shouldReduceMotion: boolean | null;
+  cardRef?: (el: HTMLDivElement | null) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInCenter = useInView(ref, {
-    margin: "-30% 0px -30% 0px"
-  });
-
-  useEffect(() => {
-    if (isInCenter && !shouldReduceMotion) {
-      onActivate(idx);
-    }
-  }, [isInCenter, idx, onActivate, shouldReduceMotion]);
 
   return (
     <motion.div
-      ref={ref}
+      ref={(el) => {
+        (ref as React.MutableRefObject<HTMLDivElement | null>).current = el;
+        if (cardRef) cardRef(el);
+      }}
       initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -126,7 +122,7 @@ function ModuleRow({
           </span>
         </div>
 
-        {/* Active expanded specs with staggered row reveal */}
+                {/* Active expanded specs with staggered row reveal */}
         <AnimatePresence>
           {isActive && (
             <motion.div
@@ -136,6 +132,21 @@ function ModuleRow({
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="overflow-hidden"
             >
+              {/* Mobile Module Image Display */}
+              <div className="lg:hidden mt-3.5 relative w-full aspect-[16/10] rounded-lg overflow-hidden border border-white/[0.08] bg-[#04070f]">
+                <img
+                  src={mod.image}
+                  alt={mod.name}
+                  className="w-full h-full object-cover object-center"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#010409]/90 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[9px] font-mono text-white/80">
+                  <span className="text-[#3daeff] font-bold">{mod.tag}</span>
+                  <span className="text-white/60">CAD REF: USDC-GB-{mod.code}</span>
+                </div>
+              </div>
+
               <div className="mt-4 pt-3.5 border-t border-white/[0.06] grid grid-cols-2 gap-2.5 text-[11px] font-mono">
                 {mod.specs.map((s, i) => (
                   <motion.div
@@ -162,6 +173,132 @@ export default function GigaBaseModules() {
   const [activeIdx, setActiveIdx] = useState(0);
   const shouldReduceMotion = useReducedMotion();
   const currentModule = GIGABASE_MODULES[activeIdx];
+  const sectionRef = useRef<HTMLElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isLockedRef = useRef(false);
+  const activeIdxRef = useRef(activeIdx);
+  activeIdxRef.current = activeIdx;
+
+  // Preload all 8 module images immediately on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      GIGABASE_MODULES.forEach((mod) => {
+        if (mod.image) {
+          const img = new window.Image();
+          img.src = mod.image;
+        }
+      });
+    }
+  }, []);
+
+  const handleSelectModule = (idx: number) => {
+    setActiveIdx(idx);
+    cardRefs.current[idx]?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  // Precise scroll stepping: at one scroll gesture, exactly 1 module moves
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      const rect = section.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      // Section is in active focus when its top has reached the header area (<= 120px)
+      // and its bottom hasn't scrolled completely past (>= viewportHeight * 0.35)
+      const inFocus = rect.top <= 120 && rect.bottom >= viewportHeight * 0.35;
+      if (!inFocus) return;
+
+      const current = activeIdxRef.current;
+
+      if (e.deltaY > 15) {
+        // Scrolling DOWN -> next module
+        if (current < GIGABASE_MODULES.length - 1) {
+          e.preventDefault();
+          if (isLockedRef.current) return;
+          isLockedRef.current = true;
+          const next = current + 1;
+          setActiveIdx(next);
+          cardRefs.current[next]?.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => {
+            isLockedRef.current = false;
+          }, 480);
+        }
+        // At module 8 (current === 7), let default scroll happen naturally into Section 4!
+      } else if (e.deltaY < -15) {
+        // Scrolling UP -> previous module
+        if (current > 0) {
+          e.preventDefault();
+          if (isLockedRef.current) return;
+          isLockedRef.current = true;
+          const prev = current - 1;
+          setActiveIdx(prev);
+          cardRefs.current[prev]?.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => {
+            isLockedRef.current = false;
+          }, 480);
+        }
+        // At module 1 (current === 0), let default scroll happen naturally up into Section 2!
+      }
+    };
+
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const rect = section.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const inFocus = rect.top <= 120 && rect.bottom >= viewportHeight * 0.35;
+      if (!inFocus) return;
+
+      const deltaY = touchStartY - e.touches[0].clientY;
+      if (Math.abs(deltaY) < 35) return;
+
+      const current = activeIdxRef.current;
+      if (deltaY > 35) {
+        // Swipe up -> advance 1 module
+        if (current < GIGABASE_MODULES.length - 1) {
+          e.preventDefault();
+          if (isLockedRef.current) return;
+          isLockedRef.current = true;
+          touchStartY = e.touches[0].clientY;
+          const next = current + 1;
+          setActiveIdx(next);
+          cardRefs.current[next]?.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => {
+            isLockedRef.current = false;
+          }, 480);
+        }
+      } else if (deltaY < -35) {
+        // Swipe down -> go back 1 module
+        if (current > 0) {
+          e.preventDefault();
+          if (isLockedRef.current) return;
+          isLockedRef.current = true;
+          touchStartY = e.touches[0].clientY;
+          const prev = current - 1;
+          setActiveIdx(prev);
+          cardRefs.current[prev]?.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => {
+            isLockedRef.current = false;
+          }, 480);
+        }
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
 
   const getModuleIcon = (idx: number) => {
     switch (idx) {
@@ -178,7 +315,11 @@ export default function GigaBaseModules() {
   };
 
   return (
-    <section id="modules" className="w-full relative bg-[#04070f] py-20 md:py-28 lg:py-32 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-white/[0.05]">
+    <section 
+      id="modules" 
+      ref={sectionRef} 
+      className="w-full relative bg-[#04070f] py-20 md:py-28 lg:py-32 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-white/[0.05]"
+    >
       {/* Background Ambience */}
       <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/[0.03] rounded-full blur-[140px] pointer-events-none"></div>
       <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] bg-cyan-600/[0.03] rounded-full blur-[140px] pointer-events-none"></div>
@@ -214,7 +355,7 @@ export default function GigaBaseModules() {
           {GIGABASE_MODULES.map((mod, idx) => (
             <button
               key={mod.number}
-              onClick={() => setActiveIdx(idx)}
+              onClick={() => handleSelectModule(idx)}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono tracking-[0.12em] transition-all whitespace-nowrap cursor-pointer ${
                 activeIdx === idx
                   ? "bg-[#3daeff]/10 text-[#3daeff] border border-[#3daeff]/40"
@@ -249,8 +390,9 @@ export default function GigaBaseModules() {
                 mod={mod}
                 idx={idx}
                 isActive={activeIdx === idx}
-                onActivate={setActiveIdx}
+                onActivate={handleSelectModule}
                 shouldReduceMotion={shouldReduceMotion}
+                cardRef={(el) => { cardRefs.current[idx] = el; }}
               />
             ))}
           </div>
@@ -280,41 +422,60 @@ export default function GigaBaseModules() {
                 </div>
               </div>
 
-              {/* Module Visual Representation (Technical HUD Schematic) */}
-              <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-[#04070f] border border-white/[0.06] flex items-center justify-center p-6 group">
-                <div className="absolute inset-0 bg-tech-grid opacity-15 pointer-events-none"></div>
-
-                {/* Animated Blueprint Telemetry */}
-                <AnimatePresence mode="wait">
+              {/* Module Visual Representation (Dynamic Infrastructure Camera Feed) */}
+              <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-[#04070f] border border-white/[0.06] group">
+                {/* Dynamic Infrastructure Module Image with 600ms Crossfade + Subtle Settle Scale */}
+                <AnimatePresence initial={false}>
                   <motion.div
-                    key={currentModule.number}
-                    initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.98, y: 6 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.98, y: -6 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center"
+                    key={currentModule.image}
+                    initial={shouldReduceMotion ? false : { opacity: 0, scale: 1.015 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 w-full h-full"
                   >
-                    <div className="w-16 h-16 rounded-xl bg-[#3daeff]/10 border border-[#3daeff]/20 flex items-center justify-center text-[#3daeff] mb-4">
-                      {getModuleIcon(activeIdx)}
-                    </div>
-                    <span className="text-xl sm:text-2xl font-bold text-white tracking-tight uppercase mb-1 font-sans">
-                      {currentModule.name}
-                    </span>
-                    <span className="text-[11px] font-mono text-[#3daeff] tracking-[0.15em] uppercase">
-                      {currentModule.tag}
-                    </span>
-
-                    {/* Micro telemetry floating badges */}
-                    <div className="absolute top-0 left-0 flex items-center gap-1.5 bg-[#010409]/90 border border-white/[0.06] px-2 py-1 rounded text-[9px] font-mono text-white/70 tracking-wider">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#3daeff] animate-pulse"></span>
-                      <span>DCIM FEED: 100% ONLINE</span>
-                    </div>
-
-                    <div className="absolute bottom-0 right-0 bg-[#010409]/90 border border-white/[0.06] px-2 py-1 rounded text-[9px] font-mono text-white/70 tracking-wider">
-                      <span>CAD REF: USDC-GB-{currentModule.code}</span>
-                    </div>
+                    <img
+                      src={currentModule.image}
+                      alt={currentModule.name}
+                      className="w-full h-full object-cover object-center"
+                      loading="eager"
+                    />
+                    {/* Industrial HUD Vignette & Contrast Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#010409]/95 via-[#010409]/20 to-[#010409]/60 pointer-events-none" />
+                    <div className="absolute inset-0 bg-tech-grid opacity-15 pointer-events-none" />
                   </motion.div>
                 </AnimatePresence>
+
+                {/* Technical HUD Overlay Elements */}
+                <div className="relative z-10 w-full h-full flex flex-col justify-between p-4 sm:p-5 pointer-events-none">
+                  {/* Top Badges */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 bg-[#010409]/80 backdrop-blur-md border border-white/[0.1] px-2.5 py-1 rounded-md text-[9.5px] font-mono text-white/80 tracking-wider">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00e878] animate-pulse"></span>
+                      <span>DCIM OPTICAL FEED // CH-0{activeIdx + 1}</span>
+                    </div>
+
+                    <div className="bg-[#010409]/80 backdrop-blur-md border border-white/[0.1] px-2.5 py-1 rounded-md text-[9.5px] font-mono text-[#3daeff] font-bold tracking-wider">
+                      <span>{currentModule.code}</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Module Tag & CAD Ref */}
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <span className="text-[10px] sm:text-[11px] font-mono text-[#3daeff] tracking-[0.15em] uppercase block mb-0.5">
+                        {currentModule.tag}
+                      </span>
+                      <h4 className="text-base sm:text-xl font-bold text-white tracking-tight uppercase font-sans drop-shadow-sm">
+                        {currentModule.name}
+                      </h4>
+                    </div>
+
+                    <div className="bg-[#010409]/80 backdrop-blur-md border border-white/[0.1] px-2.5 py-1 rounded-md text-[9px] sm:text-[9.5px] font-mono text-white/70 tracking-wider">
+                      <span>CAD REF: USDC-GB-{currentModule.code}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Telemetry Readouts Grid */}
