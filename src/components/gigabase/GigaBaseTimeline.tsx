@@ -3,6 +3,7 @@
 import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Clock, ArrowRight, Zap, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
+import TechnicalCard from "./TechnicalCard";
 
 export default function GigaBaseTimeline() {
   const shouldReduceMotion = useReducedMotion();
@@ -151,11 +152,17 @@ export default function GigaBaseTimeline() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                className="md:col-span-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.08]"
+                className="md:col-span-3"
               >
-                <span className="text-[10px] font-mono text-[#3daeff] font-bold block">MONTH 0–2</span>
-                <span className="text-xs font-bold text-white mt-1 block font-sans">Site Design & Simulation</span>
-                <span className="text-[11px] text-white/50 block mt-1 font-sans">CFD modeling & specs locked</span>
+                <TechnicalCard
+                  interactiveLevel="medium"
+                  showScanline={false}
+                  className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.08] h-full"
+                >
+                  <span className="text-[10px] font-mono text-[#3daeff] font-bold block">MONTH 0–2</span>
+                  <span className="text-xs font-bold text-white mt-1 block font-sans">Site Design & Simulation</span>
+                  <span className="text-[11px] text-white/50 block mt-1 font-sans">CFD modeling & specs locked</span>
+                </TechnicalCard>
               </motion.div>
 
               {/* Step 2: Parallel Streams (Simultaneous Reveal) */}
@@ -166,13 +173,20 @@ export default function GigaBaseTimeline() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  className="p-3 rounded-lg bg-white/[0.015] border border-[#3daeff]/30 flex items-center justify-between"
                 >
-                  <div>
-                    <span className="text-[9.5px] font-mono text-[#3daeff] block uppercase">STREAM A // ON-SITE</span>
-                    <span className="text-xs font-bold text-white font-sans">Utility Interconnection & Ground Prep</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-white/50">MO. 1–6</span>
+                  <TechnicalCard
+                    interactiveLevel="medium"
+                    showScanline={false}
+                    className="p-3 rounded-lg bg-white/[0.015] border border-[#3daeff]/30 flex items-center justify-between"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div>
+                        <span className="text-[9.5px] font-mono text-[#3daeff] block uppercase">STREAM A // ON-SITE</span>
+                        <span className="text-xs font-bold text-white font-sans">Utility Interconnection & Ground Prep</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-white/50">MO. 1–6</span>
+                    </div>
+                  </TechnicalCard>
                 </motion.div>
 
                 {/* Track B: Factory Manufacturing (Simultaneous) */}
@@ -181,13 +195,20 @@ export default function GigaBaseTimeline() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  className="p-3 rounded-lg bg-white/[0.015] border border-[#00e878]/30 flex items-center justify-between"
                 >
-                  <div>
-                    <span className="text-[9.5px] font-mono text-[#00e878] block uppercase">STREAM B // FACTORY</span>
-                    <span className="text-xs font-bold text-white font-sans">Pre-Tested 9MW Modules Built & FAT Tested</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-white/50">MO. 1–6</span>
+                  <TechnicalCard
+                    interactiveLevel="medium"
+                    showScanline={false}
+                    className="p-3 rounded-lg bg-white/[0.015] border border-[#00e878]/30 flex items-center justify-between"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div>
+                        <span className="text-[9.5px] font-mono text-[#00e878] block uppercase">STREAM B // FACTORY</span>
+                        <span className="text-xs font-bold text-white font-sans">Pre-Tested 9MW Modules Built & FAT Tested</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-white/50">MO. 1–6</span>
+                    </div>
+                  </TechnicalCard>
                 </motion.div>
               </div>
 
@@ -197,11 +218,17 @@ export default function GigaBaseTimeline() {
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="md:col-span-3 p-4 rounded-xl bg-[#070c1a] border border-[#00e878]/40 shadow-[0_0_24px_rgba(0,232,120,0.06)]"
+                className="md:col-span-3"
               >
-                <span className="text-[10px] font-mono text-[#00e878] font-bold block">MONTH 6–9</span>
-                <span className="text-xs font-bold text-white mt-1 block font-sans">Quick-Connect & Energize</span>
-                <span className="text-[11px] text-[#00e878] font-mono block mt-1 font-bold">100% ONLINE AT MO. 9</span>
+                <TechnicalCard
+                  interactiveLevel="medium"
+                  showScanline={false}
+                  className="p-4 rounded-xl bg-[#070c1a] border border-[#00e878]/40 shadow-[0_0_24px_rgba(0,232,120,0.06)] h-full"
+                >
+                  <span className="text-[10px] font-mono text-[#00e878] font-bold block">MONTH 6–9</span>
+                  <span className="text-xs font-bold text-white mt-1 block font-sans">Quick-Connect & Energize</span>
+                  <span className="text-[11px] text-[#00e878] font-mono block mt-1 font-bold">100% ONLINE AT MO. 9</span>
+                </TechnicalCard>
               </motion.div>
             </div>
 

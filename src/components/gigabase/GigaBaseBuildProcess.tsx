@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence, useInView, useReducedMotion } from "framer-motion";
 import { BUILD_PROCESS_STAGES } from "@/data/gigabaseData";
 import { CheckCircle2, Zap, ArrowRight, ShieldCheck, Factory, HardHat, Compass } from "lucide-react";
+import TechnicalCard from "./TechnicalCard";
 
 export default function GigaBaseBuildProcess() {
   const [selectedStage, setSelectedStage] = useState(0);
@@ -71,68 +72,75 @@ export default function GigaBaseBuildProcess() {
               return (
                 <motion.div
                   key={st.stage}
-                  onClick={() => setSelectedStage(idx)}
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.5, delay: idx * 0.12, ease: [0.16, 1, 0.3, 1] }}
-                  className={`p-5 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
-                    isSelected
-                      ? isFinal 
-                        ? "bg-[#070c1a] border-[#00e878]/50 shadow-[0_0_24px_rgba(0,232,120,0.08)]"
-                        : "bg-[#070c1a] border-[#3daeff]/40 shadow-[0_0_24px_rgba(61,174,255,0.06)]"
-                      : "bg-[#010409]/90 border-white/[0.06] hover:border-white/[0.14] hover:bg-white/[0.015] opacity-80 hover:opacity-100"
-                  }`}
+                  className="h-full"
                 >
-                  <div>
-                    {/* Top Row: Stage & Month */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                          isFinal ? "bg-[#00e878]/10 border border-[#00e878]/25" : "bg-[#3daeff]/10 border border-[#3daeff]/25"
-                        }`}>
-                          {getStageIcon(idx)}
+                  <TechnicalCard
+                    interactiveLevel="medium"
+                    isActive={isSelected}
+                    showScanline={false}
+                    onClick={() => setSelectedStage(idx)}
+                    className={`p-5 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col justify-between h-full ${
+                      isSelected
+                        ? isFinal 
+                          ? "bg-[#070c1a] border-[#00e878]/50 shadow-[0_0_24px_rgba(0,232,120,0.08)]"
+                          : "bg-[#070c1a] border-[#3daeff]/40 shadow-[0_0_24px_rgba(61,174,255,0.06)]"
+                        : "bg-[#010409]/90 border-white/[0.06] hover:border-white/[0.14] hover:bg-white/[0.015] opacity-80 hover:opacity-100"
+                    }`}
+                  >
+                    <div>
+                      {/* Top Row: Stage & Month */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                            isFinal ? "bg-[#00e878]/10 border border-[#00e878]/25" : "bg-[#3daeff]/10 border border-[#3daeff]/25"
+                          }`}>
+                            {getStageIcon(idx)}
+                          </div>
+                          <span className="text-[11px] font-mono font-bold text-white/40">
+                            {st.stage}
+                          </span>
                         </div>
-                        <span className="text-[11px] font-mono font-bold text-white/40">
-                          {st.stage}
+
+                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border transition-colors ${
+                          isFinal 
+                            ? "bg-[#00e878]/15 text-[#00e878] border-[#00e878]/30"
+                            : "bg-[#3daeff]/15 text-[#3daeff] border-[#3daeff]/30"
+                        }`}>
+                          {st.months}
                         </span>
                       </div>
 
-                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border transition-colors ${
-                        isFinal 
-                          ? "bg-[#00e878]/15 text-[#00e878] border-[#00e878]/30"
-                          : "bg-[#3daeff]/15 text-[#3daeff] border-[#3daeff]/30"
-                      }`}>
-                        {st.months}
-                      </span>
+                      <h3 className="text-base font-bold text-white tracking-tight uppercase mb-2 font-sans">
+                        {st.title}
+                      </h3>
+
+                      <p className="text-[13px] text-white/50 leading-[1.65] font-normal font-sans">
+                        {st.description}
+                      </p>
                     </div>
 
-                    <h3 className="text-base font-bold text-white tracking-tight uppercase mb-2 font-sans">
-                      {st.title}
-                    </h3>
-
-                    <p className="text-[13px] text-white/50 leading-[1.65] font-normal font-sans">
-                      {st.description}
-                    </p>
-                  </div>
-
-                  {/* Micro badge */}
-                  <div className="mt-4 pt-3 border-t border-white/[0.05] flex items-center justify-between">
-                    <span className="text-[9.5px] font-mono text-white/40 uppercase tracking-[0.12em]">
-                      {st.badge}
-                    </span>
-                    {isFinal && (
-                      <motion.span
-                        initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.4, delay: 0.6 }}
-                        className="text-[9px] font-mono font-bold text-[#00e878] flex items-center gap-1"
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#00e878] animate-ping" />
-                        SYSTEM READY // ENERGIZED
-                      </motion.span>
-                    )}
-                  </div>
+                    {/* Micro badge */}
+                    <div className="mt-4 pt-3 border-t border-white/[0.05] flex items-center justify-between">
+                      <span className="text-[9.5px] font-mono text-white/40 uppercase tracking-[0.12em]">
+                        {st.badge}
+                      </span>
+                      {isFinal && (
+                        <motion.span
+                          initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.4, delay: 0.6 }}
+                          className="text-[9px] font-mono font-bold text-[#00e878] flex items-center gap-1"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#00e878] animate-ping" />
+                          SYSTEM READY // ENERGIZED
+                        </motion.span>
+                      )}
+                    </div>
+                  </TechnicalCard>
                 </motion.div>
               );
             })}

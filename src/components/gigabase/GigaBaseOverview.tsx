@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ShieldCheck, Cpu, GitFork, Activity, CheckCircle, AlertTriangle } from "lucide-react";
 import { motion, useInView } from "framer-motion";
+import TechnicalCard from "./TechnicalCard";
 
 export default function GigaBaseOverview() {
   const [activeTrain, setActiveTrain] = useState<number | null>(null);
@@ -132,18 +133,21 @@ export default function GigaBaseOverview() {
                   </span>
                 </div>
 
-                {/* Interactive Trains */}
+                {/* Interactive Trains with Technical Inspection Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
                   {trains.map((train) => {
                     const isActivated = activeStep >= train.step;
                     return (
-                      <div
+                      <TechnicalCard
                         key={train.id}
+                        interactiveLevel="medium"
+                        isActive={activeTrain === train.id}
+                        showScanline={false}
                         onMouseEnter={() => setActiveTrain(train.id)}
                         onMouseLeave={() => setActiveTrain(null)}
                         className={`p-3.5 rounded-xl border transition-all duration-300 cursor-pointer ${
                           activeTrain === train.id
-                            ? "border-[#3daeff]/50 bg-[#3daeff]/[0.04]"
+                            ? "border-[#3daeff]/50 bg-[#3daeff]/[0.05]"
                             : isActivated
                               ? "border-white/[0.08] bg-white/[0.02]"
                               : "border-white/[0.03] bg-white/[0.005] opacity-50"
@@ -180,7 +184,7 @@ export default function GigaBaseOverview() {
                             }}
                           ></div>
                         </div>
-                      </div>
+                      </TechnicalCard>
                     );
                   })}
                 </div>

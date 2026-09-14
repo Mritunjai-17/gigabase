@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView, useReducedMotion } from "framer-motion";
 import { GIGABASE_MODULES, ModuleItem } from "@/data/gigabaseData";
+import TechnicalCard from "./TechnicalCard";
 import { 
   Server, 
   Zap, 
@@ -15,10 +16,11 @@ import {
   ChevronRight,
   ShieldCheck,
   Activity,
-  Layers
+  Layers,
+  Check
 } from "lucide-react";
 
-// Individual scroll-aware module row
+// Individual scroll-aware module row with Technical Inspection experience
 function ModuleRow({
   mod,
   idx,
@@ -46,60 +48,112 @@ function ModuleRow({
   return (
     <motion.div
       ref={ref}
-      onClick={() => onActivate(idx)}
       initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, delay: idx * 0.04, ease: [0.16, 1, 0.3, 1] }}
-      className={`p-5 rounded-xl border transition-all duration-300 cursor-pointer ${
-        isActive
-          ? "bg-[#070c1a] border-[#3daeff]/40 shadow-[0_0_24px_rgba(61,174,255,0.06)]"
-          : "bg-[#010409]/60 border-white/[0.06] hover:border-white/[0.14] hover:bg-white/[0.015] opacity-70 hover:opacity-100"
-      }`}
+      className="relative pl-6 sm:pl-8 group"
     >
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2.5">
-          <span className={`text-[12px] font-mono font-bold transition-colors ${isActive ? "text-[#3daeff]" : "text-white/30"}`}>
-            {mod.number}
-          </span>
-          <h3 className={`text-base sm:text-lg font-bold tracking-tight uppercase font-sans transition-colors ${isActive ? "text-white" : "text-white/70"}`}>
-            {mod.name}
-          </h3>
+      {/* Connector branch to the module card */}
+      <div 
+        className={`hidden sm:block absolute left-2.5 top-8 w-4 h-[1px] transition-colors duration-300 ${
+          isActive ? "bg-[#3daeff]/80" : "bg-white/[0.08]"
+        }`}
+      />
+      {/* Connector dot */}
+      <div 
+        className={`hidden sm:block absolute left-[8px] top-[29px] w-2 h-2 rounded-full border transition-all duration-300 ${
+          isActive 
+            ? "bg-[#3daeff] border-[#3daeff] shadow-[0_0_8px_rgba(61,174,255,0.8)]" 
+            : "bg-[#010409] border-white/20"
+        }`}
+      />
+
+      <TechnicalCard
+        interactiveLevel="high"
+        isActive={isActive}
+        onClick={() => onActivate(idx)}
+        className={`p-5 rounded-xl border transition-all duration-300 cursor-pointer ${
+          isActive
+            ? "bg-[#070c1a] border-[#3daeff]/50 shadow-[0_0_30px_rgba(61,174,255,0.08)]"
+            : "bg-[#010409]/60 border-white/[0.06] hover:border-white/[0.16] hover:bg-white/[0.015] opacity-75 hover:opacity-100"
+        }`}
+      >
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="flex items-center gap-2.5">
+            <span className={`text-[12px] font-mono font-bold transition-colors ${isActive ? "text-[#3daeff]" : "text-white/30"}`}>
+              {mod.number}
+            </span>
+            <h3 className={`text-base sm:text-lg font-bold tracking-tight uppercase font-sans transition-colors ${isActive ? "text-white" : "text-white/75"}`}>
+              {mod.name}
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] px-2 py-0.5 rounded text-[#3daeff] font-semibold">
+              {mod.code}
+            </span>
+            {/* System Status Indicator Dot */}
+            <span className={`flex items-center gap-1.5 text-[9.5px] font-mono px-2 py-0.5 rounded border transition-colors ${
+              isActive 
+                ? "bg-[#00e878]/10 text-[#00e878] border-[#00e878]/30" 
+                : "bg-white/[0.02] text-white/40 border-white/[0.05]"
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-[#00e878] animate-pulse" : "bg-white/40"}`}></span>
+              <span>{mod.telemetry.status || "ONLINE"}</span>
+            </span>
+            <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${isActive ? "rotate-90 text-[#3daeff]" : "text-white/30"}`} />
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] px-2 py-0.5 rounded text-[#3daeff] font-semibold">
-            {mod.code}
+        <p className={`text-[13px] sm:text-[13.5px] leading-[1.65] font-normal font-sans transition-colors ${isActive ? "text-white/85" : "text-white/50"}`}>
+          {mod.fullDesc}
+        </p>
+
+        {/* Technical Inspection Quick Verification Bar */}
+        <div className="mt-3 pt-2.5 border-t border-white/[0.04] flex flex-wrap items-center gap-3 text-[10px] font-mono text-white/45">
+          <span className="flex items-center gap-1">
+            <Check className={`w-3 h-3 ${isActive ? "text-[#00e878]" : "text-white/30"}`} />
+            <span>POWER BUS</span>
           </span>
-          <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${isActive ? "rotate-90 text-[#3daeff]" : "text-white/30"}`} />
+          <span className="flex items-center gap-1">
+            <Check className={`w-3 h-3 ${isActive ? "text-[#00e878]" : "text-white/30"}`} />
+            <span>COOLING LOOP</span>
+          </span>
+          <span className="flex items-center gap-1 text-white/60">
+            <span className="text-white/30">REF:</span>
+            <span>USDC-GB-{mod.code}</span>
+          </span>
         </div>
-      </div>
 
-      <p className={`text-[13px] sm:text-[13.5px] leading-[1.65] font-normal font-sans transition-colors ${isActive ? "text-white/80" : "text-white/50"}`}>
-        {mod.fullDesc}
-      </p>
-
-      {/* Active expanded specs */}
-      <AnimatePresence>
-        {isActive && (
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="overflow-hidden"
-          >
-            <div className="mt-4 pt-4 border-t border-white/[0.05] grid grid-cols-2 gap-2.5 text-[11px] font-mono">
-              {mod.specs.map((s, i) => (
-                <div key={i} className="p-2 rounded-lg bg-white/[0.015] border border-white/[0.04]">
-                  <span className="text-white/40 block text-[9.5px] uppercase tracking-wider">{s.label}</span>
-                  <span className="text-white/90 font-semibold">{s.value}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Active expanded specs with staggered row reveal */}
+        <AnimatePresence>
+          {isActive && (
+            <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={shouldReduceMotion ? undefined : { opacity: 0, height: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 pt-3.5 border-t border-white/[0.06] grid grid-cols-2 gap-2.5 text-[11px] font-mono">
+                {mod.specs.map((s, i) => (
+                  <motion.div
+                    key={i}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, delay: i * 0.05 }}
+                    className="p-2.5 rounded-lg bg-white/[0.015] border border-white/[0.05]"
+                  >
+                    <span className="text-white/40 block text-[9.5px] uppercase tracking-wider">{s.label}</span>
+                    <span className="text-white/90 font-semibold">{s.value}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </TechnicalCard>
     </motion.div>
   );
 }
@@ -176,8 +230,19 @@ export default function GigaBaseModules() {
         {/* Desktop Split Showcase (Sticky Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          {/* Left Column: Interactive Module List (Scroll-tracked) */}
-          <div className="lg:col-span-6 flex flex-col gap-3">
+          {/* Left Column: Interactive Module List with Vertical Connecting Busway */}
+          <div className="lg:col-span-6 relative flex flex-col gap-3">
+            {/* System Busway Line: MODULE ↓ POWER ↓ COMPUTE ↓ COOLING ↓ INTEGRATED SYSTEM */}
+            <div className="hidden sm:block absolute left-[11px] top-6 bottom-6 w-[1px] bg-white/[0.06] z-0">
+              <motion.div
+                className="w-full bg-gradient-to-b from-[#3daeff] to-[#00e878]"
+                style={{
+                  height: `${((activeIdx + 1) / GIGABASE_MODULES.length) * 100}%`,
+                  transition: "height 0.4s ease-out"
+                }}
+              />
+            </div>
+
             {GIGABASE_MODULES.map((mod, idx) => (
               <ModuleRow
                 key={mod.number}
@@ -192,7 +257,11 @@ export default function GigaBaseModules() {
 
           {/* Right Column: Sticky Visual System Showcase */}
           <div className="lg:col-span-6 lg:sticky lg:top-28">
-            <div className="w-full rounded-2xl border border-white/[0.08] bg-[#02050c] p-6 sm:p-8 relative overflow-hidden">
+            <TechnicalCard
+              interactiveLevel="medium"
+              className="w-full rounded-2xl border border-white/[0.08] bg-[#02050c] p-6 sm:p-8"
+              showScanline={false}
+            >
               {/* Corner Telemetry Details */}
               <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-6">
                 <div className="flex items-center gap-2">
@@ -282,7 +351,7 @@ export default function GigaBaseModules() {
                 <span>Integrated into 9MW GigaBase Pod</span>
                 <span className="text-[#3daeff] font-bold">Module {activeIdx + 1} of 8</span>
               </div>
-            </div>
+            </TechnicalCard>
           </div>
 
         </div>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { FULL_STACK_PILLARS } from "@/data/gigabaseData";
 import { Globe, Cpu, Building2, Database, ArrowRight, CheckCircle2 } from "lucide-react";
+import TechnicalCard from "./TechnicalCard";
 
 export default function GigaBaseFullStack() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
@@ -61,46 +62,53 @@ export default function GigaBaseFullStack() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.55, delay: idx * 0.12, ease: [0.16, 1, 0.3, 1] }}
-                onMouseEnter={() => setHoveredIdx(idx)}
-                onMouseLeave={() => setHoveredIdx(null)}
-                className={`p-6 sm:p-7 rounded-xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
-                  isHovered
-                    ? "bg-[#02050c] border-[#3daeff]/40 shadow-[0_0_24px_rgba(61,174,255,0.06)]"
-                    : "bg-[#010409]/90 border-white/[0.08]"
-                }`}
+                className="h-full"
               >
-                {/* Giant Ghost Number */}
-                <div className="absolute top-2 right-4 text-[72px] font-black font-mono text-white/[0.03] select-none pointer-events-none">
-                  {pillar.number}
-                </div>
-
-                <div>
-                  {/* Top Category Label */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-[#3daeff]/10 border border-[#3daeff]/30 flex items-center justify-center">
-                      {getPillarIcon(idx)}
-                    </div>
-                    <span className="text-[10px] font-mono text-white/40 tracking-[0.15em] uppercase font-bold">
-                      {pillar.number} // {pillar.phase}
-                    </span>
+                <TechnicalCard
+                  interactiveLevel="subtle"
+                  showScanline={false}
+                  isActive={isHovered}
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                  className={`p-6 sm:p-7 rounded-xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden h-full ${
+                    isHovered
+                      ? "bg-[#02050c] border-[#3daeff]/40 shadow-[0_0_24px_rgba(61,174,255,0.06)]"
+                      : "bg-[#010409]/90 border-white/[0.08]"
+                  }`}
+                >
+                  {/* Giant Ghost Number */}
+                  <div className="absolute top-2 right-4 text-[72px] font-black font-mono text-white/[0.03] select-none pointer-events-none">
+                    {pillar.number}
                   </div>
 
-                  <h3 className="text-xl font-bold text-white tracking-tight uppercase mb-3 font-sans">
-                    {pillar.title}
-                  </h3>
+                  <div>
+                    {/* Top Category Label */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-[#3daeff]/10 border border-[#3daeff]/30 flex items-center justify-center">
+                        {getPillarIcon(idx)}
+                      </div>
+                      <span className="text-[10px] font-mono text-white/40 tracking-[0.15em] uppercase font-bold">
+                        {pillar.number} // {pillar.phase}
+                      </span>
+                    </div>
 
-                  <p className="text-[13px] md:text-[13.5px] text-white/50 leading-[1.65] font-normal font-sans mb-6">
-                    {pillar.description}
-                  </p>
-                </div>
+                    <h3 className="text-xl font-bold text-white tracking-tight uppercase mb-3 font-sans">
+                      {pillar.title}
+                    </h3>
 
-                {/* Bottom Metric / Highlight */}
-                <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-[#3daeff] font-bold uppercase tracking-[0.15em]">
-                    {pillar.stats}
-                  </span>
-                  <CheckCircle2 className="w-4 h-4 text-[#00e878]" />
-                </div>
+                    <p className="text-[13px] md:text-[13.5px] text-white/50 leading-[1.65] font-normal font-sans mb-6">
+                      {pillar.description}
+                    </p>
+                  </div>
+
+                  {/* Bottom Metric / Highlight */}
+                  <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-[#3daeff] font-bold uppercase tracking-[0.15em]">
+                      {pillar.stats}
+                    </span>
+                    <CheckCircle2 className="w-4 h-4 text-[#00e878]" />
+                  </div>
+                </TechnicalCard>
               </motion.div>
             );
           })}
