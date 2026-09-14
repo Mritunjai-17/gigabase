@@ -2,14 +2,24 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { ShieldCheck, Cpu, GitFork, Activity, CheckCircle, AlertTriangle } from "lucide-react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import TechnicalCard from "./TechnicalCard";
 
 export default function GigaBaseOverview() {
   const [activeTrain, setActiveTrain] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const hudRef = useRef<HTMLDivElement>(null);
   const isHudInView = useInView(hudRef, { once: true, margin: "-60px" });
+  const shouldReduceMotion = useReducedMotion();
   const [activeStep, setActiveStep] = useState(0);
+
+  // Subtle depth / parallax effect: 15-25px vertical travel over entire section scroll
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
 
   // Sequential activation of 4 trains + total power
   useEffect(() => {
@@ -32,8 +42,48 @@ export default function GigaBaseOverview() {
   ];
 
   return (
-    <section className="w-full relative bg-[#04070f] py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-white/[0.05]">
-      <div className="max-w-[1280px] mx-auto flex flex-col items-center">
+    <section 
+      ref={sectionRef} 
+      className="w-full relative bg-[#04070f] py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-white/[0.05] overflow-hidden"
+    >
+      {/* Background Cinematic AI Infrastructure Environment */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0">
+        {/* Parallax Container with initial smooth fade-in */}
+        <motion.div
+          initial={shouldReduceMotion ? { opacity: 0.2 } : { opacity: 0 }}
+          whileInView={{ opacity: 0.2 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 1.0, ease: "easeOut" }}
+          style={shouldReduceMotion ? undefined : { y: backgroundY }}
+          className="absolute -inset-y-8 inset-x-0 w-full h-[calc(100%+64px)]"
+        >
+          <img
+            src="/images/gigabase/what-is-gigabase-bg.jpg"
+            alt="GigaBase Modular Data Center and Power Infrastructure"
+            className="w-full h-full object-cover object-center brightness-90 contrast-110"
+            loading="lazy"
+          />
+        </motion.div>
+
+        {/* 1. Deep Central Dark Vignette - Subdues center by 75-85% so existing headlines & 4N/3 architecture stay ultra readable */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#04070f]/90 via-[#04070f]/75 to-[#04070f]/45" />
+
+        {/* 2. Top Edge Gradient - Seamless blend into preceding section */}
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#04070f] via-[#04070f]/80 to-transparent" />
+
+        {/* 3. Bottom Edge Gradient - Seamless blend into Section 03 */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#04070f] via-[#04070f]/85 to-transparent" />
+
+        {/* 4. Left and Right Vignettes - Soft dark perimeter fade */}
+        <div className="absolute inset-y-0 left-0 w-28 sm:w-36 bg-gradient-to-r from-[#04070f] to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-28 sm:w-36 bg-gradient-to-l from-[#04070f] to-transparent" />
+
+        {/* 5. Subtle Technical Grid & Atmospheric Blue Glow */}
+        <div className="absolute inset-0 bg-tech-grid opacity-15" />
+        <div className="absolute top-[25%] left-1/2 -translate-x-1/2 w-[750px] h-[450px] bg-[#3daeff]/[0.025] rounded-full blur-[140px]" />
+      </div>
+
+      <div className="max-w-[1280px] mx-auto flex flex-col items-center relative z-10">
         
         {/* Section Eyebrow */}
         <motion.div 
