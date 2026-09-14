@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { FULL_STACK_PILLARS } from "@/data/gigabaseData";
 import { Globe, Cpu, Building2, Database, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function GigaBaseFullStack() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const getPillarIcon = (idx: number) => {
     switch (idx) {
@@ -25,7 +27,13 @@ export default function GigaBaseFullStack() {
       <div className="max-w-[1280px] mx-auto">
         
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center text-center mb-10 sm:mb-12"
+        >
           <div className="flex items-center gap-2 mb-4">
             <span className="w-5 h-[1.5px] bg-[#3daeff]"></span>
             <span className="text-[11px] font-semibold text-white/70 tracking-[0.2em] uppercase font-sans">
@@ -40,20 +48,24 @@ export default function GigaBaseFullStack() {
           <p className="text-[14px] md:text-[15px] text-white/65 max-w-2xl leading-[1.8] font-normal font-sans">
             Most data centers are assembled from a chain of 12+ separate companies. We own the entire value chain — origination, manufacturing, development, operations — under one roof.
           </p>
-        </div>
+        </motion.div>
 
-        {/* 4 Large Technical Pillar Panels */}
+        {/* 4 Large Technical Pillar Panels: Sequential directional reveal */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {FULL_STACK_PILLARS.map((pillar, idx) => {
             const isHovered = hoveredIdx === idx;
             return (
-              <div
+              <motion.div
                 key={pillar.number}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, delay: idx * 0.12, ease: [0.16, 1, 0.3, 1] }}
                 onMouseEnter={() => setHoveredIdx(idx)}
                 onMouseLeave={() => setHoveredIdx(null)}
-                className={`p-6 sm:p-7 rounded-xl border transition-colors duration-200 flex flex-col justify-between relative overflow-hidden ${
+                className={`p-6 sm:p-7 rounded-xl border transition-all duration-300 flex flex-col justify-between relative overflow-hidden ${
                   isHovered
-                    ? "bg-[#02050c] border-[#3daeff]/40"
+                    ? "bg-[#02050c] border-[#3daeff]/40 shadow-[0_0_24px_rgba(61,174,255,0.06)]"
                     : "bg-[#010409]/90 border-white/[0.08]"
                 }`}
               >
@@ -89,7 +101,7 @@ export default function GigaBaseFullStack() {
                   </span>
                   <CheckCircle2 className="w-4 h-4 text-[#00e878]" />
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { TRADITIONAL_VENDORS } from "@/data/gigabaseData";
 import { Layers, ArrowRight, CheckCircle2, ShieldAlert, GitCommit, Sparkles } from "lucide-react";
 
 export default function GigaBaseStack() {
   const [hoveredVendor, setHoveredVendor] = useState<number | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <section className="w-full relative bg-[#04070f] py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-white/[0.05]">
@@ -16,7 +18,13 @@ export default function GigaBaseStack() {
       <div className="max-w-[1280px] mx-auto">
         
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center text-center mb-10 sm:mb-12"
+        >
           <div className="flex items-center gap-2 mb-4">
             <span className="w-5 h-[1.5px] bg-[#3daeff]"></span>
             <span className="text-[10px] font-semibold text-white/90 tracking-[0.2em] uppercase font-sans">
@@ -31,13 +39,19 @@ export default function GigaBaseStack() {
           <p className="text-[14px] md:text-[15px] text-white/65 max-w-2xl leading-[1.8] font-normal font-sans">
             10 vendor hand-offs mean 10 places your project can stall. We eliminate those gaps and protect your timeline.
           </p>
-        </div>
+        </motion.div>
 
         {/* Compression Comparison Card: 10 Fragmented Nodes vs 1 Unified System */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Left Panel: Traditional Fragmented 10-Vendor Maze */}
-          <div className="lg:col-span-6 rounded-2xl border border-white/[0.07] bg-[#02050c] p-6 sm:p-8 flex flex-col justify-between">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, x: -15 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-6 rounded-2xl border border-white/[0.07] bg-[#02050c] p-6 sm:p-8 flex flex-col justify-between"
+          >
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-6">
                 <div className="flex items-center gap-2">
@@ -55,11 +69,15 @@ export default function GigaBaseStack() {
                 Fragmented responsibility creates delay cascades, margin stacking, and finger-pointing when energization targets slip.
               </p>
 
-              {/* 10 Vendors Grid */}
+              {/* 10 Vendors Grid with progressive stagger */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {TRADITIONAL_VENDORS.map((v, i) => (
-                  <div
+                  <motion.div
                     key={v.step}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-20px" }}
+                    transition={{ duration: 0.35, delay: i * 0.04, ease: "easeOut" }}
                     onMouseEnter={() => setHoveredVendor(i)}
                     onMouseLeave={() => setHoveredVendor(null)}
                     className={`p-2.5 rounded-lg border transition-all text-left flex items-center gap-2.5 ${
@@ -70,7 +88,7 @@ export default function GigaBaseStack() {
                   >
                     <span className="text-[10px] font-mono text-white/40 font-bold">{v.step}</span>
                     <span className="text-[11.5px] text-white/70 font-sans truncate">{v.name}</span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -79,10 +97,16 @@ export default function GigaBaseStack() {
               <span>Risk: 10 Hand-off Failure Points</span>
               <span>18–24 Months</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Panel: USDC Single Unified System */}
-          <div className="lg:col-span-6 rounded-2xl border border-[#3daeff]/30 bg-[#070c1a] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, x: 15 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-6 rounded-2xl border border-[#3daeff]/30 bg-[#070c1a] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-[0_0_30px_rgba(61,174,255,0.05)]"
+          >
             <div className="relative z-10">
               <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-6">
                 <div className="flex items-center gap-2">
@@ -125,7 +149,7 @@ export default function GigaBaseStack() {
               <span>Single Point of Contact & Responsibility</span>
               <span className="font-bold">9 Months Guaranteed</span>
             </div>
-          </div>
+          </motion.div>
 
         </div>
 

@@ -1,10 +1,13 @@
 "use client";
 
 import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { COMPARISON_DATA } from "@/data/gigabaseData";
 import { Check, X, ShieldCheck, Zap } from "lucide-react";
 
 export default function GigaBaseComparison() {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <section className="w-full relative bg-[#04070f] py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-white/[0.05]">
       {/* Background Ambience */}
@@ -13,7 +16,13 @@ export default function GigaBaseComparison() {
       <div className="max-w-[1280px] mx-auto">
         
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center text-center mb-10 sm:mb-12"
+        >
           <div className="flex items-center gap-2 mb-4">
             <span className="w-5 h-[1.5px] bg-[#3daeff]"></span>
             <span className="text-[11px] font-semibold text-white/70 tracking-[0.2em] uppercase font-sans">
@@ -28,7 +37,7 @@ export default function GigaBaseComparison() {
           <p className="text-[14px] md:text-[15px] text-white/65 max-w-2xl leading-[1.8] font-normal font-sans">
             Eliminating vendor sprawl and assembling in controlled factory environments delivers unmatched schedule certainty and engineering quality.
           </p>
-        </div>
+        </motion.div>
 
         {/* Technical Matrix Table */}
         <div className="w-full rounded-xl border border-white/[0.08] bg-[#010409]/95 overflow-hidden">
@@ -43,12 +52,16 @@ export default function GigaBaseComparison() {
             </div>
           </div>
 
-          {/* Matrix Rows */}
+          {/* Matrix Rows: Sequential stagger as rows enter viewport */}
           <div className="divide-y divide-white/[0.06]">
             {COMPARISON_DATA.map((row, idx) => (
-              <div
+              <motion.div
                 key={row.category}
-                className="grid grid-cols-12 px-6 sm:px-8 py-5 sm:py-6 items-start sm:items-center gap-4 sm:gap-0 hover:bg-white/[0.01] transition-colors"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className="grid grid-cols-12 px-6 sm:px-8 py-5 sm:py-6 items-start sm:items-center gap-4 sm:gap-0 hover:bg-white/[0.015] transition-colors"
               >
                 {/* Category & Title */}
                 <div className="col-span-12 sm:col-span-4 flex flex-col pr-4">
@@ -89,7 +102,7 @@ export default function GigaBaseComparison() {
                     {row.othersSub}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
