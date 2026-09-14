@@ -195,13 +195,24 @@ export const GIGABASE_MODULES: ModuleItem[] = [
   },
 ];
 
-export const BUILD_PROCESS_STAGES = [
+export interface BuildStage {
+  stage: string;
+  months: string;
+  title: string;
+  description: string;
+  badge: string;
+  image: string;
+  details: string[];
+}
+
+export const BUILD_PROCESS_STAGES: BuildStage[] = [
   {
     stage: "01",
     months: "MO. 0–2",
     title: "SITE DESIGN",
     description: "Giga’s engineering and design team plans your site around your specific compute, cooling, and density requirements.",
     badge: "ENGINEERING & ARCHITECTURE",
+    image: "/images/gigabase/site-design.jpg",
     details: ["Computational Fluid Dynamics (CFD)", "Geotechnical & Civil Survey", "Power Interconnect Permitting", "Custom Rack Layouts"],
   },
   {
@@ -210,6 +221,7 @@ export const BUILD_PROCESS_STAGES = [
     title: "SITE DEVELOPMENT & MANUFACTURING",
     description: "Giga manages utility interconnection, ground prep, and building construction, all while your modules are built and tested in our factories.",
     badge: "PARALLEL EXECUTION",
+    image: "/images/gigabase/site-development.jpg",
     details: ["Factory Module Fabrication", "FAT (Factory Acceptance Testing)", "Utility Substation Prep", "Underground Conduits & Pads"],
   },
   {
@@ -218,6 +230,7 @@ export const BUILD_PROCESS_STAGES = [
     title: "MODULES PLACED ON-SITE",
     description: "Giga manufactures, tests, and commissions your data center infrastructure. Modules arrive ready to connect, reducing field labor by 10x.",
     badge: "10X FIELD LABOR REDUCTION",
+    image: "/images/gigabase/modules-on-site.jpg",
     details: ["Precision Crane Placement", "Plug-and-play 5000A Glue", "Hydronic Manifold Mating", "Integrated Systems Testing"],
   },
   {
@@ -226,6 +239,7 @@ export const BUILD_PROCESS_STAGES = [
     title: "ENERGIZATION",
     description: "Modules arrive pre-tested and ready to go. Power flows, cooling connects, and your site is rack-ready in 9 months.",
     badge: "SYSTEM READY / ENERGIZED",
+    image: "/images/gigabase/energization.jpg",
     details: ["Grid Energization Verification", "Thermal Runaway Stress Testing", "Telemetry & DCIM Handover", "Hyperscale Compute On-Line"],
   },
 ];
